@@ -6,6 +6,8 @@ const server = require('../../../../server');
 
 chai.use(chaiHttp);
 
+let productId = null;
+
 describe('API V1 Product', () => {
 
   before(function (done) {
@@ -73,6 +75,48 @@ describe('API V1 Product', () => {
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(res.body).to.have.property('_id');
+          productId = res.body._id;
+          done();
+        });
+    });
+  });
+
+  describe('DELETE', () => {
+
+    it('validates if auth it\'s missing', (done) => {
+      chai.request(server)
+        .delete(`/api/v1/products/${productId}`)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+    });
+
+    it('validates if auth is invalid', (done) => {
+      chai.request(server)
+        .delete(`/api/v1/products/${productId}`)
+        .set('Authorization', 'whatever')
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          done();
+        });
+    });
+
+    it('validates id as required when it\'s null', (done) => {
+      chai.request(server)
+        .delete('/api/v1/products/null')
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+    });
+
+    it('removes the product successfully', (done) => {
+      chai.request(server)
+        .delete(`/api/v1/products/${productId}`)
+        .set('Authorization', process.env.API_AUTH_TOKEN)
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
           done();
         });
     });

@@ -23,3 +23,23 @@ exports.insert = (req, res) => {
     res.status(500).send(err);
   });
 };
+
+exports.remove = (req, res) => {
+  const id = req.params.id;
+  const hasId = id && id !== "null";
+  if (!hasId) {
+    const out = {
+      code: 'INVALID_PARAM',
+      message: 'id field is required'
+    };
+    return res.status(400).json(out);
+  }
+  const query = {
+    _id: req.params.id
+  };
+  Product.deleteOne(query).then((data) => {
+    res.status(200).json(data);
+  }).catch(err => {
+    res.status(500).send(err);
+  })
+};
