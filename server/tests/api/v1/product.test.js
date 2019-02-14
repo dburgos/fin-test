@@ -42,6 +42,25 @@ describe('API V1 Product', () => {
         });
     });
 
+    it('validates if auth it\'s missing', (done) => {
+      chai.request(server)
+        .post('/api/v1/products')
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+    });
+
+    it('validates if auth is invalid', (done) => {
+      chai.request(server)
+        .post('/api/v1/products')
+        .set('Authorization', 'whatever')
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          done();
+        });
+    });
+
     it('saves the product successfully', (done) => {
       const newProduct = {
         name: 'Testing name',
@@ -49,6 +68,7 @@ describe('API V1 Product', () => {
       };
       chai.request(server)
         .post('/api/v1/products')
+        .set('Authorization', process.env.API_AUTH_TOKEN)
         .send(newProduct)
         .end((err, res) => {
           expect(res.status).to.equal(200);
