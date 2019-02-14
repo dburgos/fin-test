@@ -2,7 +2,7 @@
   "private": true,
   "name": "fin-test",
   "description": "",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "author": {
     "name": "David Burgos",
     "email": "david.burgos.risco+fintest@gmail.com"
@@ -14,7 +14,7 @@
   "scripts": {
     "start": "node server.js",
     "start-dev": "./node_modules/nodemon/bin/nodemon.js --watch server --watch server.js;",
-    "test": "mocha server/tests/**/*.js --coverage --reporter spec"
+    "test": "mocha server/tests/**/*.js --reporter spec"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
