@@ -8,15 +8,8 @@ exports.list = (req, res) => {
   });
 };
 
-exports.insert = (req, res) => {
-  const hasName = req.body.name && req.body.name !== "null";
-  if (!hasName) {
-    const out = {
-      code: 'INVALID_PARAM',
-      message: 'name field is required'
-    };
-    return res.status(400).json(out);
-  }
+exports.insert = async (req, res) => {
+  await requireName(req, res);
   Product.create(req.body).then(product => {
     res.status(200).json(product);
   }).catch(err => {
@@ -24,16 +17,8 @@ exports.insert = (req, res) => {
   });
 };
 
-exports.remove = (req, res) => {
-  const id = req.params.id;
-  const hasId = id && id !== "null";
-  if (!hasId) {
-    const out = {
-      code: 'INVALID_PARAM',
-      message: 'id field is required'
-    };
-    return res.status(400).json(out);
-  }
+exports.remove = async (req, res) => {
+  await requireParamId(req, res);
   const query = {
     _id: req.params.id
   };
@@ -43,3 +28,32 @@ exports.remove = (req, res) => {
     res.status(500).send(err);
   })
 };
+
+async function requireName(req, res) {
+  return new Promise(resolve => {
+    const hasName = req.body.name && req.body.name !== "null";
+    if (!hasName) {
+      const out = {
+        code: 'INVALID_PARAM',
+        message: 'name field is required'
+      };
+      return res.status(400).json(out);
+    }
+    resolve();
+  });
+}
+
+async function requireParamId(req, res) {
+  return new Promise(resolve => {
+    const id = req.params.id;
+    const hasId = id && id !== "null";
+    if (!hasId) {
+      const out = {
+        code: 'INVALID_PARAM',
+        message: 'id field is required'
+      };
+      return res.status(400).json(out);
+    }
+    resolve();
+  });
+}
